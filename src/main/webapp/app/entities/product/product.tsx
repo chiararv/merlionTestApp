@@ -18,6 +18,7 @@ export const Product = (props: IProductProps) => {
   }, []);
 
   const { productList, match, loading } = props;
+
   return (
     <div>
       <h2 id="product-heading">
