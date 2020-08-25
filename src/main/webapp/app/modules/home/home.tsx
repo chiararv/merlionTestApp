@@ -1,30 +1,43 @@
 import './home.scss';
 
-import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
 import { Row, Col, Alert, Table } from 'reactstrap';
-import { getEntities } from '../../entities/sales/sales.reducer';
+import { getEntities, sendOrder, updateEntity } from './home.reducer';
 
 import { IRootState } from 'app/shared/reducers';
+import Orders from './orders'
+import Delivered from './delivered';
+import Shipped from './shipped';
 
-export type IHomeProp = StateProps;
 
-export const Home = (props: IHomeProp) => {
+export interface IHomeProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
+
+export const Home = (props: IHomeProps) => {
+  const { salesList, updating, errorMsg } = props;
+
+  const [status, setStatus] = useState('orders')
 
   useEffect(() => {
-    getEntities();
+    props.getEntities()
   }, []);
 
-  const { salesList } = props;
+const orders = salesList.filter(sale => sale.state === "IN_CHARGE")
+const shippedOrders = salesList.filter(sale => sale.state === "SHIPPED")
+const deliveredOrders = salesList.filter(sale => sale.state === "DELIVERED")
+// eslint-disable-next-line no-console 
+// console.log({salesList, orders, shippedOrders, deliveredOrders})
+
+  
 
   return (
     <div>
       <div>
-        <button>encargado</button>
-        <button>enviado</button>
-        <button>entregado</button>
+        <button onClick={() => setStatus('orders')}>encargado</button>
+        <button onClick={() => setStatus('shipped')}>enviado</button>
+        <button onClick={() =>setStatus('delivered')}>entregado</button>
       </div>
       <Table responsive>
       <thead>
@@ -33,7 +46,7 @@ export const Home = (props: IHomeProp) => {
             Nro
           </th>
           <th>
-            Poveedor
+            Proveedor
           </th>
           <th>
           Fecha de entrega
@@ -43,32 +56,37 @@ export const Home = (props: IHomeProp) => {
         </tr>
       </thead>
       <tbody>
-      {
-        salesList.map( (sale, i) => (
-          <tr key={`entity-${i}`}>
-            <td>{sale.product.id}</td>
-            <td>Merlion Techs</td>
-            <td>fecha</td>
-            <td><button>accion</button></td>
-          </tr>
-
-        ))
-      }
+        {
+          status === 'orders' && <Orders orders={orders} updateEntity={props.updateEntity} />
+        }
+        {
+          status === 'shipped' && <Shipped shippedOrders={shippedOrders}/>
+        }
+        {
+          status === 'delivered' && <Delivered deliveredOrders={deliveredOrders}/>
+        }
+        
+        
       </tbody>
     </Table>
     </div>
   );
 };
 
-const mapStateToProps = ({ sales }: IRootState) => ({
-  salesList: sales.entities,
-  loading: sales.loading,
+const mapStateToProps = ({home}: IRootState) => ({
+  salesList: home.entities,
+  loading: home.loading,
+  updating: home.updating,
+  errorMsg: home.errorMessage
 });
 
 const mapDispatchToProps = {
   getEntities,
-
+  sendOrder,
+  updateEntity
 };
+
 type StateProps = ReturnType<typeof mapStateToProps>;
+type DispatchProps = typeof mapDispatchToProps;
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
