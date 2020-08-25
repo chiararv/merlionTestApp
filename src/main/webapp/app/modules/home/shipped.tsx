@@ -1,26 +1,37 @@
-import React from 'react'
+import React from 'react';
+import { connect } from 'react-redux';
+import { IRootState } from 'app/shared/reducers';
 
 const Shipped = (props) => {
-// eslint-disable-next-line no-console 
+    const { salesList } = props
 
+    const deliverOrder = (id) => {
+        const saleEntity = salesList.find(sale => sale.id === id)
+        const updatedEntity = {...saleEntity}
+        updatedEntity.state = "DELIVERED"
+        props.updateEntity(updatedEntity)
+
+    }
     return (
-        <div>
+        <>
         {
             props.shippedOrders.map( (sale, i) => (
                 <tr key={`entity-${i}`}>
-                    <td>{sale.product.id}</td>
+                    <td>{sale.id}</td>
                     <td>Merlion Techs</td>
+                    <td>{sale.product.id}</td>
                     <td>fecha</td>
-                    <td><button>entregar</button></td>
+                    <td><button className="btn btn-primary float-right jh-create-entity" onClick={() => deliverOrder(sale.id)}>entregar</button></td>
                 </tr>
 
                 ))
         }
-        <div>shipped</div>
-        </div>
+        </>
 
     )
 }
-
-export default Shipped
+const mapStateToProps = ({home}: IRootState) => ({
+    salesList: home.entities,
+  });
+export default connect(mapStateToProps)(Shipped)
 

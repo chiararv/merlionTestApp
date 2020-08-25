@@ -19,21 +19,20 @@ const shipOrder = (id) => {
 
 
     return (
-        <div>
+        <>
         {
             props.orders.map( (sale, i) => (
                 <tr key={`entity-${i}`}>
-                    <td>{sale.product.id}</td>
+                    <td>{sale.id}</td>
                     <td>Merlion Techs</td>
+                    <td>{sale.product.id}</td>
                     <td>fecha</td>
-                    <td>{sale.product.name}</td>
-                    <td><button onClick={() => shipOrder(sale.id)}>enviar</button></td>
+                    <td><button className="btn btn-primary float-right jh-create-entity" onClick={() => shipOrder(sale.id)}>enviar</button></td>
                 </tr>
 
                 ))
         }
-        <div>orders</div>
-        </div>
+        </>
 
     )
 }

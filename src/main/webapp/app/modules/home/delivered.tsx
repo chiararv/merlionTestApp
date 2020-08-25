@@ -4,19 +4,19 @@ const Delivered = (props) => {
 // eslint-disable-next-line no-console 
 
     return (
-        <div>
+        <>
         {
             props.deliveredOrders.map( (sale, i) => (
                 <tr key={`entity-${i}`}>
-                    <td>{sale.product.id}</td>
+                    <td>{sale.id}</td>
                     <td>Merlion Techs</td>
+                    <td>{sale.product.id}</td>
                     <td>fecha</td>
                 </tr>
 
                 ))
         }
-        <div>delivered</div>
-        </div>
+        </>
 
     )
 }
