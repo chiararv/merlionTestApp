@@ -122,6 +122,8 @@ export const createEntity: ICrudPutAction<IProductBucket> = entity => async disp
 };
 
 export const updateEntity: ICrudPutAction<IProductBucket> = entity => async dispatch => {
+  // eslint-disable-next-line no-console
+  console.log('entro accion');
   const result = await dispatch({
     type: ACTION_TYPES.UPDATE_PRODUCTBUCKET,
     payload: axios.put(apiUrl, cleanEntity(entity)),

@@ -7,96 +7,51 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
 import { getEntities } from './product-bucket.reducer';
+import { getEntity } from './product-bucket.reducer';
+import { updateEntity } from './product-bucket.reducer';
 import { IProductBucket } from 'app/shared/model/product-bucket.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+
+import ProductOverview from './productOverview'
+import ProductStock from './productStock';
+import Container from './container';
 
 export interface IProductBucketProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
 export const ProductBucket = (props: IProductBucketProps) => {
+
+  const [stock, setStock] = useState(false)
+  const { productBucketList, match, loading } = props;
   useEffect(() => {
     props.getEntities();
+    props.getEntity(1);
+    
   }, []);
 
-  const { productBucketList, match, loading } = props;
+ 
+
+  const showStock = () => {
+    setStock(true)
+  }
+  const hideStock = () => {
+    setStock(false)
+  }
+
+
+  const handleUpdate = (entity) => {
+    props.updateEntity(entity)
+  }
+  
+
+
   return (
     <div>
-      <h2 id="product-bucket-heading">
-        <Translate contentKey="testApp.productBucket.home.title">Product Buckets</Translate>
-        <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
-          <FontAwesomeIcon icon="plus" />
-          &nbsp;
-          <Translate contentKey="testApp.productBucket.home.createLabel">Create new Product Bucket</Translate>
-        </Link>
-      </h2>
-      <div className="table-responsive">
-        {productBucketList && productBucketList.length > 0 ? (
-          <Table responsive>
-            <thead>
-              <tr>
-                <th>
-                  <Translate contentKey="global.field.id">ID</Translate>
-                </th>
-                <th>
-                  <Translate contentKey="testApp.productBucket.availableToSellQuantity">Available To Sell Quantity</Translate>
-                </th>
-                <th>
-                  <Translate contentKey="testApp.productBucket.inChargeQuantity">In Charge Quantity</Translate>
-                </th>
-                <th>
-                  <Translate contentKey="testApp.productBucket.brokenQuantity">Broken Quantity</Translate>
-                </th>
-                <th>
-                  <Translate contentKey="testApp.productBucket.product">Product</Translate>
-                </th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {productBucketList.map((productBucket, i) => (
-                <tr key={`entity-${i}`}>
-                  <td>
-                    <Button tag={Link} to={`${match.url}/${productBucket.id}`} color="link" size="sm">
-                      {productBucket.id}
-                    </Button>
-                  </td>
-                  <td>{productBucket.availableToSellQuantity}</td>
-                  <td>{productBucket.inChargeQuantity}</td>
-                  <td>{productBucket.brokenQuantity}</td>
-                  <td>{productBucket.product ? <Link to={`product/${productBucket.product.id}`}>{productBucket.product.id}</Link> : ''}</td>
-                  <td className="text-right">
-                    <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`${match.url}/${productBucket.id}`} color="info" size="sm">
-                        <FontAwesomeIcon icon="eye" />{' '}
-                        <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.view">View</Translate>
-                        </span>
-                      </Button>
-                      <Button tag={Link} to={`${match.url}/${productBucket.id}/edit`} color="primary" size="sm">
-                        <FontAwesomeIcon icon="pencil-alt" />{' '}
-                        <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.edit">Edit</Translate>
-                        </span>
-                      </Button>
-                      <Button tag={Link} to={`${match.url}/${productBucket.id}/delete`} color="danger" size="sm">
-                        <FontAwesomeIcon icon="trash" />{' '}
-                        <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.delete">Delete</Translate>
-                        </span>
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        ) : (
-          !loading && (
-            <div className="alert alert-warning">
-              <Translate contentKey="testApp.productBucket.home.notFound">No Product Buckets found</Translate>
-            </div>
-          )
-        )}
-      </div>
+      <h1 style={{textAlign: 'center'}}>Product Bucket</h1>
+      {
+         !loading && productBucketList.map( productBucket => (
+            <Container id={productBucket.id} entity={productBucket} key={productBucket.id} update={handleUpdate}/>
+         ))
+      }
     </div>
   );
 };
@@ -108,6 +63,8 @@ const mapStateToProps = ({ productBucket }: IRootState) => ({
 
 const mapDispatchToProps = {
   getEntities,
+  getEntity,
+  updateEntity,
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
