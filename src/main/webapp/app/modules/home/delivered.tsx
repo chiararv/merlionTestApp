@@ -1,8 +1,6 @@
 import React from 'react'
 
 const Delivered = (props) => {
-// eslint-disable-next-line no-console 
-
     return (
         <>
         {
@@ -11,10 +9,9 @@ const Delivered = (props) => {
                     <td>{sale.id}</td>
                     <td>Merlion Techs</td>
                     <td>{sale.product.id}</td>
-                    <td>fecha</td>
                 </tr>
 
-                ))
+            ))
         }
         </>
 

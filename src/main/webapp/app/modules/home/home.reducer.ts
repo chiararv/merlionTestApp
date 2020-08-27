@@ -30,12 +30,8 @@ export type HomeState = Readonly<typeof initialState>;
 // Reducer
 
 export default (state: HomeState = initialState, action): HomeState => {
-  // eslint-disable-next-line
-  console.log('accc', action.type);
   switch (action.type) {
     case ACTION_TYPES.SEND_ORDER:
-      // const a = state.entities.findIndex(entity => entity.id === action.orderId)
-      // newState.entities[a].state = "SHIPPED"
       return {
         ...state,
         entities: { ...state.entities },
@@ -76,8 +72,6 @@ export default (state: HomeState = initialState, action): HomeState => {
         entities: action.payload.data,
       };
     case SUCCESS(ACTION_TYPES.FETCH_SALES):
-      // eslint-disable-next-line
-      console.log('UMAMI');
       return {
         ...state,
         loading: false,
@@ -132,17 +126,6 @@ export const createEntity: ICrudPutAction<ISales> = entity => async dispatch => 
   dispatch(getEntities());
   return result;
 };
-
-// export const updateEntity: ICrudPutAction<ISales> = (id, state) => async dispatch => {
-
-//   // eslint-disable-next-line
-//   console.log(saleEntity)
-//   const result = await dispatch({
-//     type: ACTION_TYPES.UPDATE_SALES,
-//     payload: axios.put(apiUrl, cleanEntity(updatedEntity)),
-//   });
-//   return result;
-// };
 
 export const updateEntity: ICrudPutAction<ISales> = entity => async dispatch => {
   const result = await dispatch({

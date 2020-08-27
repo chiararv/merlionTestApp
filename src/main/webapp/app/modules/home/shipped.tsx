@@ -20,11 +20,10 @@ const Shipped = (props) => {
                     <td>{sale.id}</td>
                     <td>Merlion Techs</td>
                     <td>{sale.product.id}</td>
-                    <td>fecha</td>
                     <td><button className="btn btn-primary float-right jh-create-entity" onClick={() => deliverOrder(sale.id)}>entregar</button></td>
                 </tr>
 
-                ))
+            ))
         }
         </>
 
