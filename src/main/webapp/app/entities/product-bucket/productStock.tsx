@@ -1,15 +1,15 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { create } from 'domain';
-import styled from 'styled-components'
+
 
 
 const ProductStock = (props) => {
    
-    const { productBucket, data, handleUpdateEntity, key } = props
-    // eslint-disable-next-line no-console
-    console.log('entra')
+    const { entity, handleUpdateEntity} = props
+
     const grid = 8;
+    const categories = ['availableToSellQuantity', 'brokenQuantity', 'inChargeQuantity']
+
 
     const getItemStyle = (isDragging, draggableStyle) => ({
         userSelect: 'none',
@@ -32,38 +32,26 @@ const ProductStock = (props) => {
         display: 'flex'
     });
 
-    const reorder = (list, startIndex, endIndex) => {
-        const result = Array.from(list);
-        const [removed] = result.splice(startIndex, 1);
-        result.splice(endIndex, 0, removed);
-    
-        return result;
-    };
-
     const onDragEnd = result => {
         const { source, destination, draggableId } = result;
 
-        // dropped outside the list
         if (!destination) {
             return;
         }
+
         if(source.droppableId === destination.droppableId) return
-        const updatedProductBucket = {...productBucket}
+        const updatedEntity = {...entity}
 
-        updatedProductBucket[source.droppableId] = updatedProductBucket[source.droppableId] - 1;
-        updatedProductBucket[destination.droppableId] = updatedProductBucket[destination.droppableId] + 1;
+        updatedEntity[source.droppableId] = updatedEntity[source.droppableId] - 1;
+        updatedEntity[destination.droppableId] = updatedEntity[destination.droppableId] + 1;
 
-        handleUpdateEntity(updatedProductBucket)
-               // eslint-disable-next-line no-console
-               console.log({productBucket, updatedProductBucket, destination, handleUpdateEntity})
+        handleUpdateEntity(updatedEntity)
+
     };
     
-    // const arr = [...Array(productBucket.availableToSellQuantity)]
-
-
     const createArr = (category) => {
         const arr = []
-        for ( let i = 0; i < productBucket[category]; i += 1){
+        for ( let i = 0; i < entity[category]; i += 1){
             const product = {
                 id: `product-${category}-${i}`
             }
@@ -71,36 +59,24 @@ const ProductStock = (props) => {
            }
            return arr
     }
-    const categories = ['availableToSellQuantity', 'brokenQuantity', 'inChargeQuantity']
-
-    const Container = styled.div`
-        padding: 2em;
-        background: rgb(235, 245, 238);
-        display: flex;
-        flex-direction: column;
-        margin: 20px;
-    `;
 
     return (
         <DragDropContext onDragEnd={onDragEnd}>
-            <h4 style={{margin:'20px', fontWeight: 700, textTransform: 'capitalize'}}>{productBucket.product.name}</h4>
-            <Container>
-                {categories.map((category, iterator) => (
-                    <Droppable droppableId={category} key={category}>
+            <h4 style={{margin:'20px', fontWeight: 700, textTransform: 'capitalize'}}>{entity.product.name}</h4>
+            <div style={{padding: '2em',background: 'rgb(235, 245, 238)', display:'flex', flexDirection: 'column', margin:'20px' }}>
+                {categories.map((category) => (
+                    <Droppable droppableId={category} key={category} direction="horizontal">
                     {(provided, snapshot) => (
                         <>
                          <div>{category}</div>                        
-                        <div
+                         <div
                             ref={provided.innerRef}
                             style={getListStyle(snapshot.isDraggingOver)}
-                        >
-                           
+                        >                           
                             {                           
-                                createArr(category).map( (i, index) => (
-                                <> 
-                                     
+                                createArr(category).map( (i, index) => (                                    
                                     <Draggable
-                                        key={`${productBucket.id}${index}`}
+                                        key={`${entity.id}${index}`}
                                         draggableId={i.id}
                                         index={index}>
                                             
@@ -117,7 +93,6 @@ const ProductStock = (props) => {
                                             </div>
                                         )}
                                     </Draggable>
-                                </>
                                 ))
                             }
                             {provided.placeholder}
@@ -126,9 +101,8 @@ const ProductStock = (props) => {
                     )}
                 </Droppable>
                 ))}
-            </Container>
-
-            </DragDropContext> 
+            </div>
+        </DragDropContext> 
     )
 }
 

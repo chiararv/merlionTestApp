@@ -72,13 +72,16 @@ export default (state: ProductBucketState = initialState, action): ProductBucket
         entity: action.payload.data,
       };
     case SUCCESS(ACTION_TYPES.CREATE_PRODUCTBUCKET):
-    case SUCCESS(ACTION_TYPES.UPDATE_PRODUCTBUCKET):
+    case SUCCESS(ACTION_TYPES.UPDATE_PRODUCTBUCKET): {
+      const newEntities = state.entities.filter(e => e.id !== action.payload.data.id);
       return {
         ...state,
+        entities: [...newEntities, action.payload.data],
         updating: false,
         updateSuccess: true,
         entity: action.payload.data,
       };
+    }
     case SUCCESS(ACTION_TYPES.DELETE_PRODUCTBUCKET):
       return {
         ...state,
@@ -122,8 +125,6 @@ export const createEntity: ICrudPutAction<IProductBucket> = entity => async disp
 };
 
 export const updateEntity: ICrudPutAction<IProductBucket> = entity => async dispatch => {
-  // eslint-disable-next-line no-console
-  console.log('entro accion');
   const result = await dispatch({
     type: ACTION_TYPES.UPDATE_PRODUCTBUCKET,
     payload: axios.put(apiUrl, cleanEntity(entity)),

@@ -20,36 +20,27 @@ export interface IProductBucketProps extends StateProps, DispatchProps, RouteCom
 
 export const ProductBucket = (props: IProductBucketProps) => {
 
-  const [stock, setStock] = useState(false)
-  const { productBucketList, match, loading } = props;
+  const { productBucketList, loading } = props;
   useEffect(() => {
-    props.getEntities();
-    props.getEntity(1);
-    
+    props.getEntities();  
   }, []);
-
- 
-
-  const showStock = () => {
-    setStock(true)
-  }
-  const hideStock = () => {
-    setStock(false)
-  }
-
 
   const handleUpdate = (entity) => {
     props.updateEntity(entity)
   }
+
+  const sortedProductBucketList = [...productBucketList].sort((a, b) => a.id - b.id)
   
-
-
   return (
     <div>
-      <h1 style={{textAlign: 'center'}}>Product Bucket</h1>
+      <h1 style={{textAlign: 'center', fontWeight: 700}}>Product Bucket</h1>
       {
-         !loading && productBucketList.map( productBucket => (
-            <Container id={productBucket.id} entity={productBucket} key={productBucket.id} update={handleUpdate}/>
+         !loading && sortedProductBucketList.map( productBucket => (
+          <ProductStock
+          key={productBucket.id}
+          entity={productBucket}
+          handleUpdateEntity={handleUpdate}
+        />
          ))
       }
     </div>
@@ -59,6 +50,7 @@ export const ProductBucket = (props: IProductBucketProps) => {
 const mapStateToProps = ({ productBucket }: IRootState) => ({
   productBucketList: productBucket.entities,
   loading: productBucket.loading,
+  updating: productBucket.updating
 });
 
 const mapDispatchToProps = {
